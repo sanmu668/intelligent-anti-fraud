@@ -2,68 +2,76 @@ import pandas as pd
 from datetime import datetime
 from app.utils.logger import logger
 
-def get_alerts_data(data_cache, page, page_size, alert_type, risk_level, status, start_date, end_date):
+def get_alerts_data(data_cache, page=1, page_size=20, alert_type='', risk_level='', status='', start_date=None, end_date=None):
     """Get alerts data with filtering and pagination"""
-    if not data_cache.transactions or not data_cache.last_update:
-        data_cache.load_data()
+    try:
+        if not data_cache.transactions or not data_cache.last_update:
+            data_cache.load_data()
 
-    df = pd.DataFrame(data_cache.transactions)
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
+        df = pd.DataFrame(data_cache.transactions)
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
 
-    if start_date and end_date:
-        try:
-            start = pd.to_datetime(start_date).tz_localize(None)
-            end = pd.to_datetime(end_date).tz_localize(None)
-            logger.info(f"Filtering data between {start} and {end}")
+        if start_date and end_date:
+            try:
+                start = pd.to_datetime(start_date).tz_localize(None)
+                end = pd.to_datetime(end_date).tz_localize(None)
+                logger.info(f"Filtering data between {start} and {end}")
 
-            if df['timestamp'].dt.tz is not None:
-                df['timestamp'] = df['timestamp'].dt.tz_localize(None)
+                if df['timestamp'].dt.tz is not None:
+                    df['timestamp'] = df['timestamp'].dt.tz_localize(None)
 
-            df = df[(df['timestamp'] >= start) & (df['timestamp'] <= end)]
-            logger.info(f"Filtered data shape: {df.shape}")
-        except Exception as e:
-            logger.error(f"Error parsing dates: {e}")
-            return {
-                'error': f'Invalid date format: {str(e)}'
-            }
+                df = df[(df['timestamp'] >= start) & (df['timestamp'] <= end)]
+                logger.info(f"Filtered data shape: {df.shape}")
+            except Exception as e:
+                logger.error(f"Error parsing dates: {e}")
+                return {
+                    'error': f'Invalid date format: {str(e)}'
+                }
 
-    alerts = []
-    high_risk_txs = df[df['risk_score'] > 0.7]
-    logger.info(f"Found {len(high_risk_txs)} high risk transactions")
+        alerts = []
+        high_risk_txs = df[df['risk_score'] > 0.7]
+        logger.info(f"Found {len(high_risk_txs)} high risk transactions")
 
-    alerts = format_alerts(high_risk_txs)
-    filtered_alerts = filter_alerts(alerts, alert_type, risk_level, status)
-    
-    # Sort and paginate
-    filtered_alerts.sort(key=lambda x: x['time'], reverse=True)
-    total = len(filtered_alerts)
-    start_idx = (page - 1) * page_size
-    end_idx = start_idx + page_size
-    paged_alerts = filtered_alerts[start_idx:end_idx]
+        alerts = format_alerts(high_risk_txs)
+        filtered_alerts = filter_alerts(alerts, alert_type, risk_level, status)
+        
+        # Sort and paginate
+        filtered_alerts.sort(key=lambda x: x['time'], reverse=True)
+        total = len(filtered_alerts)
+        start_idx = (page - 1) * page_size
+        end_idx = start_idx + page_size
+        paged_alerts = filtered_alerts[start_idx:end_idx]
 
-    return {
-        'total': total,
-        'items': paged_alerts
-    }
+        return {
+            'total': total,
+            'items': paged_alerts
+        }
+    except Exception as e:
+        logger.error(f"Error getting alerts: {e}")
+        return {'error': str(e)}
 
 def process_alerts_batch(data):
     """Process batch of alerts"""
-    alert_ids = data.get('alertIds', [])
-    method = data.get('method')
-    description = data.get('description')
-    handler = data.get('handler', 'System')
+    try:
+        alert_ids = data.get('alertIds', [])
+        method = data.get('method')
+        description = data.get('description')
+        handler = data.get('handler', 'System')
 
-    return {
-        'success': True,
-        'message': f'Processed {len(alert_ids)} alerts',
-        'data': {
-            'alert_ids': alert_ids,
-            'method': method,
-            'description': description,
-            'handler': handler,
-            'process_time': datetime.now().isoformat()
+        return {
+            'success': True,
+            'message': f'Processed {len(alert_ids)} alerts',
+            'data': {
+                'alert_ids': alert_ids,
+                'method': method,
+                'description': description,
+                'handler': handler,
+                'process_time': datetime.now().isoformat()
+            }
         }
-    }
+    except Exception as e:
+        logger.error(f"Error batch processing alerts: {e}")
+        return {'error': str(e)}
 
 def format_alerts(high_risk_txs):
     """Format alerts from high risk transactions"""
