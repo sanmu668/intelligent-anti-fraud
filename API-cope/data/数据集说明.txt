@@ -1,0 +1,24 @@
+FinancialDatasets.csv
+https://www.kaggle.com/datasets/ealaxi/paysim1
+
+step - 映射现实世界中的时间单位。在本例中，1 步长代表 1 小时。总步长 744（模拟 30 天）。
+
+type - 现金存入、现金取出、借记、付款和转账。
+
+amount——以当地货币计算的交易金额。
+
+nameOrig - 发起交易的客户
+
+oldbalanceOrg - 交易前的初始余额
+
+newbalanceOrig – 交易后的新余额。
+
+nameDest - 交易接收者的客户
+
+oldbalanceDest - 交易前的初始余额收款人。请注意，没有以 M 开头的客户（商户）的信息。
+
+newbalanceDest - 交易后新的余额接收方。请注意，没有以 M 开头的客户（商户）的信息。
+
+isFraud - 这是模拟中欺诈代理进行的交易。在此特定数据集中，代理的欺诈行为旨在通过控制客户账户获利，并试图通过转移到另一个账户然后从系统中提现来清空资金。
+
+isFlaggedFraud - 该商业模型旨在控制账户间的大规模转账，并标记非法尝试。本数据集中的非法尝试是指单笔交易中转账金额超过 20 万英镑的尝试。

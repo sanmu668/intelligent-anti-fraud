@@ -1,0 +1,96 @@
+@import './variables.scss';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  color: $text-regular;
+  background-color: $background-color;
+}
+
+#app {
+  height: 100%;
+}
+
+.page-container {
+  padding: $content-padding;
+  background-color: $background-light;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+// 清新蓝色主题样式
+.theme-light-blue {
+  background: linear-gradient(to right, #ECF5FF, #F5F7FA);
+
+  .el-header {
+    background: linear-gradient(to right, #409EFF, #79bbff);
+    color: white;
+  }
+
+  .el-aside {
+    background-color: white;
+    border-right: 1px solid $border-light;
+  }
+
+  .el-main {
+    background-color: transparent;
+  }
+}
+
+// 卡片样式
+.analysis-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: $text-primary;
+    margin-bottom: 15px;
+  }
+}
+
+// 图表容器样式
+.chart-container {
+  height: 400px;
+  width: 100%;
+
+  &.small {
+    height: 300px;
+  }
+
+  &.large {
+    height: 500px;
+  }
+}
+
+// 动画效果
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
